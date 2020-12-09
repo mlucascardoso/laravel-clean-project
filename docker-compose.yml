@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  php:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: ems-tech-challenge-php
+    restart: unless-stopped
+    working_dir: /var/www/
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - mysql
+    networks:
+      - development-network
+
+  mysql:
+    image: 'mysql:8.0'
+    ports:
+        - '${DB_PORT}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - './docker-compose/mysql:/var/lib/mysql'
+    networks:
+      - development-network
+
+networks:
+  development-network:
+    driver: bridge
